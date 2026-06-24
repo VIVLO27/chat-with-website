@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* Core palette */
+  --bg-deep:        #050510;
+  --bg-mid:         #0a0a1a;
+  --surface:        rgba(255,255,255,0.04);
+  --surface-hover:  rgba(255,255,255,0.07);
+  --surface-border: rgba(255,255,255,0.08);
+
+  /* Brand */
+  --primary:        #7c3aed;
+  --primary-light:  #a78bfa;
+  --secondary:      #06b6d4;
+  --secondary-light:#67e8f9;
+  --accent:         #f472b6;
+  --accent-light:   #fbcfe8;
+
+  /* Glow helpers */
+  --glow-purple:    rgba(124,58,237,0.35);
+  --glow-cyan:      rgba(6,182,212,0.25);
+  --glow-pink:      rgba(244,114,182,0.2);
+
+  /* Text */
+  --foreground:     #f1f5f9;
+  --muted:          #94a3b8;
+  --muted-dark:     #64748b;
+
+  /* Semantic */
+  --user-msg:       rgba(124,58,237,0.12);
+  --user-msg-border:rgba(124,58,237,0.25);
+  --assistant-msg:  rgba(6,182,212,0.06);
+  --assistant-msg-border: rgba(6,182,212,0.15);
+
+  --error-bg:   rgba(239,68,68,0.1);
+  --error-text: #f87171;
+  --error-border: rgba(239,68,68,0.25);
+
+  --success-bg:   rgba(16,185,129,0.1);
+  --success-text: #34d399;
+  --success-border: rgba(16,185,129,0.25);
+
+  --warn-bg:    rgba(245,158,11,0.1);
+  --warn-text:  #fbbf24;
+  --warn-border:rgba(245,158,11,0.25);
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Fira Code', monospace;
+
+  /* Radii */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-deep);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* === Animated mesh gradient background === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 10%, rgba(124,58,237,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(6,182,212,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(244,114,182,0.08) 0%, transparent 60%),
+    var(--bg-deep);
+  animation: meshShift 14s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* Moving noise-like orbs */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle 400px at var(--ox, 20%) var(--oy, 30%), rgba(124,58,237,0.12) 0%, transparent 70%),
+    radial-gradient(circle 350px at calc(100% - var(--ox, 20%)) calc(100% - var(--oy, 30%)), rgba(6,182,212,0.10) 0%, transparent 70%);
+  animation: orbFloat 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes meshShift {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+@keyframes orbFloat {
+  0%   { --ox: 15%; --oy: 25%; }
+  33%  { --ox: 70%; --oy: 15%; }
+  66%  { --ox: 40%; --oy: 75%; }
+  100% { --ox: 80%; --oy: 50%; }
+}
+
+/* Grid overlay for depth */
+body {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+#__next, main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-dark); }
+
+/* Selection */
+::selection { background: var(--glow-purple); color: var(--foreground); }

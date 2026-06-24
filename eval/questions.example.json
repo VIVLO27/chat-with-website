@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What is the company's mission?",
+    "expectedSourceContains": "/about"
+  },
+  {
+    "question": "How do I contact support?",
+    "expectedSourceContains": "/contact"
+  },
+  {
+    "question": "What is the pricing for enterprise?",
+    "expectedSourceContains": "/pricing"
+  }
+]
