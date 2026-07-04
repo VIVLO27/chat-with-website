@@ -18,6 +18,15 @@ function safeEnqueue(
   }
 }
 
+// NEW: A safe wrapper for closing the controller to prevent race conditions
+function safeClose(controller: ReadableStreamDefaultController<Uint8Array>) {
+  try {
+    controller.close();
+  } catch {
+    // Controller is already closed, ignore the Node.js Invalid State error
+  }
+}
+
 export async function POST(request: Request) {
   let body: {
     sessionId?: string;
@@ -77,7 +86,7 @@ export async function POST(request: Request) {
           sessionId,
           question.trim(),
           history,
-          signal // Passed signal down to abort upstream processing if user disconnects
+          signal
         );
 
         if (signal.aborted) return;
@@ -103,18 +112,17 @@ export async function POST(request: Request) {
           }
         }
 
-        // Only explicitly call close if the stream completed naturally
         if (!signal.aborted) {
           safeEnqueue(controller, {
             type: 'done',
           });
-          controller.close();
+          // FIXED: Replaced standard close with safeClose
+          safeClose(controller);
         }
       } catch (err) {
         let message = 'Chat failed';
 
         if (err instanceof Error) {
-          // If the stream was aborted, exit silently without logging an error
           if (err.name === 'AbortError') return;
 
           message = err.message;
@@ -135,7 +143,8 @@ export async function POST(request: Request) {
             type: 'error',
             message,
           });
-          controller.close();
+          // FIXED: Replaced standard close with safeClose
+          safeClose(controller);
         }
       }
     },
