@@ -76,7 +76,8 @@ export async function POST(request: Request) {
         } = await streamRagResponse(
           sessionId,
           question.trim(),
-          history
+          history,
+          signal // Passed signal down to abort upstream processing if user disconnects
         );
 
         if (signal.aborted) return;
@@ -102,15 +103,20 @@ export async function POST(request: Request) {
           }
         }
 
+        // Only explicitly call close if the stream completed naturally
         if (!signal.aborted) {
           safeEnqueue(controller, {
             type: 'done',
           });
+          controller.close();
         }
       } catch (err) {
         let message = 'Chat failed';
 
         if (err instanceof Error) {
+          // If the stream was aborted, exit silently without logging an error
+          if (err.name === 'AbortError') return;
+
           message = err.message;
 
           try {
@@ -129,12 +135,7 @@ export async function POST(request: Request) {
             type: 'error',
             message,
           });
-        }
-      } finally {
-        try {
           controller.close();
-        } catch {
-          // Ignore if already closed
         }
       }
     },
