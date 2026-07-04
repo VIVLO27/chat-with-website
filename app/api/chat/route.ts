@@ -31,6 +31,7 @@ export async function POST(request: Request) {
   let body: {
     sessionId?: string;
     question?: string;
+    signal: AbortSignal
     history?: Array<{
       role: 'user' | 'assistant';
       content: string;
